@@ -1,18 +1,23 @@
 <!Doctype html>
-<html lang="ko">
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
 
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta property="og:title" content="샀다치고 기록장"/>
+    <meta property="og:url" content="www.nobuy.shop"/>
+    <meta property="og:image" content="/static/money.png"/>
+    <meta property="og:description" content="샀다치고 참으세요"/>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-          crossorigin="anonymous">
+
+    <!-- Bootstrap CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
     <!-- JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
             integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
             crossorigin="anonymous"></script>
@@ -38,67 +43,179 @@
             font-family: "NEXON Lv1 Gothic OTF"
         }
 
-        .wrap {
-            width: 900px;
-            margin: auto;
-        }
-
-        .comment {
-            color: blue;
-            font-weight: bold;
-        }
-
-        #post-box {
-            width: 500px;
-            margin: 20px auto;
-            padding: 50px;
-            border: black solid;
-            border-radius: 5px;
-        }
-
         h1 {
+            text-align: center;
+        }
+
+        body {
             text-align: center;
         }
 
         .lead {
             text-align: center;
+        }
+
+
+        .jumbotron {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+            margin-bottom: 0;
+            background-color: #f8f9fa;
+        }
+
+        .card-body a {
+            font-size: 20px;
+        }
+
+        @media (min-width: 1000px) {
+            .baseInformation {
+                width: 1000px;
+            }
+        }
+
+        @media (max-width: 1086px) {
+            nav {
+                position: static;
+            }
+
+        }
 
     </style>
     <script>
         $(document).ready(function () {
-            $("#cards-box").html("");
-            showArticles();
+            // $("#cards-box").html("");
+            $("#post-box").html("");
+            // showCard();
         });
 
-        // function openClose() {
-        //     // id 값 post-box의 display 값이 block 이면(= 눈에 보이면)
-        //     if ($("#post-box").css("display") == "block") {
-        //         // post-box를 가리고
-        //         $("#post-box").hide();
-        //         // 다시 버튼을 클릭하면, 박스 열기를 할 수 있게 텍스트 바꿔두기
-        //         $("#btn-post-box").text("포스팅 박스 열기");
-        //     } else {
-        //         // 아니면(눈에 보이지 않으면) post-box를 펴라
-        //         $("#post-box").show();
-        //         // 다시 버튼을 클릭하면, 박스 닫기를 할 수 있게 텍스트 바꿔두기
-        //         $("#btn-post-box").text("포스팅 박스 닫기");
-        //     }
-        // }
+        function postCard(event) {
+            event.preventDefault()
 
-        function postCard() {
             let goal = $("#question1").val();
             let name = $("#post-name").val();
+            let email = $("#post-email").val();
             let url = $("#post-url").val();
             let story = $("#post-story").val();
+            // let price = $("#price").val();
+
+            if (goal == "") {
+                alert("목표를 작성해주세요!");
+                $("#question1").focus();
+                return;
+            } else if (name == "") {
+                alert("이름을 입력해주세요!");
+                $("#post-nameo").focus();
+                return;
+            } else if (email == "") {
+                alert("이메일을 작성해주세요!");
+                $("#post-email").focus();
+                return;
+            } else if (story == "") {
+                alert("Story를 작성해주세요!");
+                $("#post-story").focus();
+                return;
+            }
 
             $.ajax({
                 type: "POST",
                 url: "/card",
-                data: {goal_give: goal, name_give: name, url_give: url, story_give: story},
+                data: {goal_give: goal, name_give: name, email_give: email, url_give: url, story_give: story},
                 success: function (response) {
                     if (response["result"] == "success") {
-                        alert("포스팅 성공!");
-                        window.location.reload();
+                        alert("인내하셨군요? 인내카드를 발급합니다 \uD83D\uDE00");
+                        openClose();
+                    } else {
+                        alert("서버 오류!");
+                    }
+                },
+                error: function (err) {
+                    alert("서버자체 오류!");
+                }
+            })
+
+        }
+
+        function openClose() {
+            // id 값 post-box의 display 값이 block 이면(= 눈에 보이면)
+            if ($("#post-box").css("display") === "block") {
+                // 아니면(눈에 보이지 않으면) post-box를 펴라
+                $("#post-box").show();
+                // 다시 버튼을 클릭하면, 박스 닫기를 할 수 있게 텍스트 바꿔두기
+                $("#btn-post-box").hide();
+            } else {
+                // post-box를 가리고
+                $("#post-box").hide();
+                // 다시 버튼을 클릭하면, 박스 열기를 할 수 있게 텍스트 바꿔두기
+                $("#btn-post-box").text("인내카드 발급");
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/card-list",
+                data: {},
+                success: function (response) {
+                    let patientCards = response["patient_card"];
+                    for (let i = 0; patientCards.length; i++) {
+                        let thisCard = patientCards[i];
+                        if (thisCard["url"] === $("#post-url").val()) {
+                            makeCard(thisCard["image"], thisCard["title"], thisCard["url"], thisCard["desc"], thisCard["story"]);
+                        }
+                    }
+                }
+            })
+        }
+
+        function makeCard(image, title, url, desc, story) {
+            let tempHtml =
+                `<div class="card mb-3" id="post-box" style="display: block">
+    <div class="card-container" style="width:500px; margin: auto">
+        <img src="${image}"
+             class="card-img-top" alt="제품이미지">
+        <div class="card-body" style="padding-bottom: 0px">
+            <a href="${url}"
+               class="card-title" target="_blank">${title}</a>
+            <p class="card-text">${desc}</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">가격을 입력해주세요</span>
+                    </div>
+                    <input type="text" class="form-control" id="price">
+                    <div class="input-group-append">
+                        <span class="input-group-text">원(KRW)</span>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">${story}
+            </li>
+        </ul>
+        <div class="card-body" style="padding: 10px; text-align: center">
+            <button id="btn-go-card" type="button" onclick="showCard()" class="btn btn-secondary btn-lg"
+                    style="margin-top: 0px; position: center">구매
+            </button>
+        </div>
+    </div>
+</div>`
+            $('#post-box').append(tempHtml)
+        }
+
+        function showCard() {
+
+            let price = $("#price").val();
+            let url = $("#post-url").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/card-price",
+                data: {price_give: price, url_give: url},
+                success: function (response) {
+                    if (response["result"] == "success") {
+                        alert("했다치고 아껴서 이 돈 저금하기!");
+                        location.href = "/card-archive";
+                        console.log('11111');
+                        // showCardList();
                     } else {
                         alert("서버 오류!")
                     }
@@ -106,172 +223,132 @@
             })
         }
 
-        function showArticles() {
-            $.ajax({
-                type: "GET",
-                url: "/memo",
-                data: {},
-                success: function (response) {
-                    let articles = response["articles"];
-                    console.log(articles);
-                    for (let i = 0; i < articles.length; i++) {
-                        makeCard(articles[i]["image"], articles[i]["url"], articles[i]["title"], articles[i]["desc"], articles[i]["comment"]);
-                    }
-                }
-            })
-        }
-
-        function makeCard(image, url, title, desc, comment) {
-            let tempHtml = `<div class="card">
-                        <img class="card-img-top" src="${image}" alt="Card image cap">
-                        <div class="card-body">
-                        <a href="${url}" target="_blank" class="card-title">${title}</a>
-                        <p class="card-text">${desc}</p>
-                        <p class="card-text comment">${comment}</p>
-                        </div>
-                    </div>`;
-            $("#cards-box").append(tempHtml);
-
-        }
     </script>
 
 </head>
-
 <body>
-<div class="wrap">
-    <div class="jumbotron jumbotron-fluid">
+<!--<nav class="navbar navbar-light bg-light">-->
+<!--    <a class="navbar-brand" href="http://nobuy.shop/"-->
+<!--       style="text-align: center; position: fixed; margin-top: 50px">샀다치고</br> 기록장</a>-->
+<!--</nav>-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light bd-navbar">
+        <a class="navbar-brand" href="http://nobuy.shop/" style="font-size: 1.4rem">샀다치고 기록장</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="http://nobuy.shop/card-archive">카드모음집 <span
+                            class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Calender</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="jumbotron jumbotron-fluid" style="margin-bottom: 20px">
         <div class="container">
             <h1 class="display-4" style="font-weight: bolder">샀다치고 기록해보자</h1>
             <p class="lead" style="font-weight: bolder">샀다치고, 사치를 인내하자. 인내를 사치하자</p>
         </div>
     </div>
-    <!--            <div class="jumbotron">-->
-    <!--                <h1 class="display-4">나홀로 링크 메모장!</h1>-->
-    <!--                <p class="lead">중요한 링크를 저장해두고, 나중에 볼 수 있는 공간입니다</p>-->
-    <!--                <hr class="my-4">-->
-    <!--                <p class="lead">-->
-    <!--                    <button onclick="openClose()" id="btn-post-box" type="button" class="btn btn-primary">포스팅 박스 열기-->
-    <!--                    </button>-->
-    <!--                </p>-->
-    <!--            </div>-->
-    <div class="baseInformation">
+
+<!--<div class="wrapping">-->
+<div class="baseInformation" style="margin: auto;">
+    <form onsubmit="postCard(event)">
         <div class="form-group">
-            <label for="question1" style="font-size: 20px; font-weight: bolder;">돈을 모으기 위한 이유는 무엇인가요?
+            <label for="question1" style="font-size: 20px; font-weight: bolder; text-align: center; ">돈을
+                모으기 위한 이유는 무엇인가요?
                 &#128176;</label>
             <input type="text" class="form-control" id="question1" style="font-size: 18px"
                    placeholder="간단명료하게 써보세요 (예) 집, 차">
         </div>
 
-        <label for="post-name" style="font-size: 20px; font-weight: bolder;">지금 사려고 망설이는 것들이 있나요? &#129300;</label>
+        <label for="post-name" style="font-size: 20px; font-weight: bolder;text-align: center; ">지금 사려고
+            망설이는 것들이 있나요?
+            &#129300;</label>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon3" style="font-size: 18px">이름</span>
+                <span class="input-group-text" id="basic-addon3" style="font-size: 18px">항목</span>
             </div>
             <input type="text" class="form-control" id="post-name" aria-describedby="basic-addon3"
-                   placeholder="(예)샤넬백, BMW">
+                   placeholder="(예)가방, 자동차, 그림 등" style="font-size: 18px">
         </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon5" style="font-size: 18px">이메일</span>
+            </div>
+            <input type="email" class="form-control" id="post-email" placeholder="name@example.com"
+                   style="font-size: 18px">
+            <!--aria-describedby="basic-addon3-->
 
+        </div>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <span class="input-group-text" style="font-size: 18px">URL</span>
             </div>
             <input type="text" class="form-control" id="post-url" aria-label="Amount (to the nearest dollar)"
-                   placeholder="(예)www.naver.com">
-            <!--        <div class="input-group-append">-->
-            <!--            <span class="input-group-text">.00</span>-->
-            <!--        </div>-->
+                   placeholder="(예)www.naver.com" style="font-size: 18px">
         </div>
 
         <div class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text" style="font-size: 18px">망설이고 있는 자신의 모습</span>
             </div>
-            <textarea class="form-control" id="post-story" aria-label="With textarea" placeholder="망설이는 자신의 모습을 자유롭게 적어보세요"
+            <textarea class="form-control" id="post-story" aria-label="With textarea"
+                      placeholder="망설이는 자신의 모습을 자유롭게 적어보세요"
                       style="font-size: 18px"></textarea>
 
         </div>
+
         <p class="lead">
-            <button onclick="postCard()" id="btn-post-box" type="button" class="btn btn-secondary btn-lg" style="margin-top: 35px">포스팅 박스 열기
+            <button id="btn-card-box" type="submit" class="btn btn-secondary btn-lg"
+                    style="margin-top: 35px; background-color: cadetblue; border-color: #f8f9fa">인내카드 발급
             </button>
         </p>
-        <!--    <div id="cards-box" class="card-columns">-->
-        <!--        <div class="card">-->
-        <!--            <img class="card-img-top"-->
-        <!--                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"-->
-        <!--                 alt="Card image cap">-->
-        <!--            <div class="card-body">-->
-        <!--                <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>-->
-        <!--                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>-->
-        <!--                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--        <div class="card">-->
-        <!--            <img class="card-img-top"-->
-        <!--                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"-->
-        <!--                 alt="Card image cap">-->
-        <!--            <div class="card-body">-->
-        <!--                <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>-->
-        <!--                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>-->
-        <!--                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--        <div class="card">-->
-        <!--            <img class="card-img-top"-->
-        <!--                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"-->
-        <!--                 alt="Card image cap">-->
-        <!--            <div class="card-body">-->
-        <!--                <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>-->
-        <!--                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>-->
-        <!--                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--        <div class="card">-->
-        <!--            <img class="card-img-top"-->
-        <!--                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"-->
-        <!--                 alt="Card image cap">-->
-        <!--            <div class="card-body">-->
-        <!--                <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>-->
-        <!--                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>-->
-        <!--                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--        <div class="card">-->
-        <!--            <img class="card-img-top"-->
-        <!--                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"-->
-        <!--                 alt="Card image cap">-->
-        <!--            <div class="card-body">-->
-        <!--                <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>-->
-        <!--                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>-->
-        <!--                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--        <div class="card">-->
-        <!--            <img class="card-img-top"-->
-        <!--                 src="https://www.eurail.com/content/dam/images/eurail/Italy%20OCP%20Promo%20Block.adaptive.767.1535627244182.jpg"-->
-        <!--                 alt="Card image cap">-->
-        <!--            <div class="card-body">-->
-        <!--                <a href="#" class="card-title">여기 기사 제목이 들어가죠</a>-->
-        <!--                <p class="card-text">기사의 요약 내용이 들어갑니다. 동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라만세 무궁화 삼천리 화려강산...</p>-->
-        <!--                <p class="card-text comment">여기에 코멘트가 들어갑니다.</p>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--    </div>-->
-        <!--    <div id="post-box" class="form-post" style="display:none">-->
-        <!--        <div>-->
-        <!--            <div class="form-group">-->
-        <!--                <label for="post-url">아티클 URL</label>-->
-        <!--                <input id="post-url" class="form-control" placeholder="">-->
-        <!--            </div>-->
-        <!--            <div class="form-group">-->
-        <!--                <label for="post-comment">간단 코멘트</label>-->
-        <!--                <textarea id="post-comment" class="form-control" rows="2"></textarea>-->
-        <!--            </div>-->
-        <!--            <button type="button" class="btn btn-primary" onclick="postArticle()">기사저장</button>-->
-        <!--        </div>-->
-        <!--    </div>-->
-        <!--</div>-->
+    </form>
+</div>
+
+</br>
+
+<div class="card mb-3" id="post-box" style="display: block">
+    <div class="card-container" style="width:500px; margin: auto">
+        <img src="http://thumb.cjmall.net/unsafe/fit-in/470x470/itemimage.cjmall.net/goods_images/63/648/63250648L.jpg?timestamp=20200324092522"
+             class="card-img-top" alt="제품이미지">
+        <div class="card-body" style="padding-bottom: 0px">
+            <a href="http://display.cjmall.com/p/item/63250648?gclid=Cj0KCQjwvvj5BRDkARIsAGD9vlIvbxaxnc-xMlkne8oD-1338tPtlah_lUKzARB9cpB2yP6e0Un-2e8aAiX8EALw_wcB"
+               class="card-title" target="_blank">상품상세정보</a>
+            <p class="card-text">여성 우먼스 나이키 리액트 엘리먼트 55 NIKE BQ2728-012</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">가격을 입력해주세요</span>
+                    </div>
+                    <input type="text" class="form-control" id="price">
+                    <div class="input-group-append">
+                        <span class="input-group-text">원(KRW)</span>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">너어무 사고싶은데 5번째 참는 중
+            </li>
+        </ul>
+        <div class="card-body" style="padding: 10px; margin: auto">
+            <button id="btn-go-card" type="button" onclick="showCard()" class="btn btn-secondary btn-lg"
+                    style="margin-top: 0px; position: center">구매하기
+            </button>
+        </div>
     </div>
 </div>
+
+
 </body>
 
 </html>

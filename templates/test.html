@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+
+
+    <title>샀다치고 기록장</title>
+
+    <!-- style -->
+    <style type="text/css">
+
+        /*눈누폰트*/
+        @font-face {
+            font-family: 'NEXON Lv1 Gothic OTF';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            font-family: "NEXON Lv1 Gothic OTF"
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .jumbotron {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+            margin-bottom: 0;
+            background-color: #f8f9fa;
+        }
+
+        .lead {
+            text-align: center;
+        }
+
+
+        .card-body a {
+            font-size: 20px;
+        }
+
+        .inline {
+            display: inline-block;
+            margin: auto;
+
+        }
+
+        #btn-good {
+            background-color: cadetblue;
+            border-radius: 1.5rem;
+            border-color: white;
+        }
+
+        #btn-bad {
+            background-color: darkgrey;
+            border-radius: 1.5rem;
+            border-color: white;
+        }
+
+        .btn-outline-success {
+            color: dimgray;
+            border-color: dimgray;
+        }
+
+    </style>
+    <script>
+    </script>
+</head>
+<body>
+<div>
+    <!--    <nav class="navbar navbar-light bg-light">-->
+    <!--        <a class="navbar-brand" href="http://localhost:5000/" style="text-align: center; position: fixed; margin-top: 50px">샀다치고</br> 기록장</a>-->
+    <!--    </nav>-->
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="http://nobuy.shop/" style="text-align: center; position: fixed; margin-top: 50px">샀다치고</br>
+            기록장</a>
+        <form class="form-inline" style="margin-left: 70%">
+            <input class="form-control mr-sm-2" id="post-email" type="search" placeholder="이메일로 내 기록 조회"
+                   aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="show_total()">Search</button>
+        </form>
+    </nav>
+
+    <div class="jumbotron jumbotron-fluid" style="margin-bottom: 20px">
+        <div class="container">
+            <h1 class="display-4" style="font-weight: bolder">샀다치고 기록해보자</h1>
+            <p class="lead" style="font-weight: bolder">샀다치고, 사치를 인내하자. 인내를 사치하자</p>
+        </div>
+    </div>
+
+
+    <div class="container" id="sum-total">
+        <h1 class="display-4" style="font-size: 2.3rem; font-weight: bolder"> &#128077 샀다치고 아껴서 누적된 금액</h1>
+        <p class="lead" style="font-weight: bolder">1500000원</p>
+    </div>
+
+
+    <div class="row row-cols-1 row-cols-md-3" id="cards-box" style="width: 1200px; margin: auto">
+        <div class="col mb-4">
+            <div class="card">
+                <img src="http://thumb.cjmall.net/unsafe/fit-in/470x470/itemimage.cjmall.net/goods_images/63/648/63250648L.jpg?timestamp=20200324092522"
+                     class="card-img-top" alt="제품이미지">
+                <div class="card-body">
+                    <a href="http://display.cjmall.com/p/item/63250648?gclid=Cj0KCQjwvvj5BRDkARIsAGD9vlIvbxaxnc-xMlkne8oD-1338tPtlah_lUKzARB9cpB2yP6e0Un-2e8aAiX8EALw_wcB"
+                       class="card-title">상품상세정보</a>
+                    <p class="card-text">여성 우먼스 나이키 리액트 엘리먼트 55 NIKE BQ2728-012</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">가격: 10000원
+                    <button id="btn-edit-price" type="button" class="btn btn-light btn-sm" onclick="edit-price-Card()"
+                            style="border: 1px solid rgba(0,0,0,.125)">수정하기
+                    </button></li>
+                </ul>
+                <li class="list-group-item">너어무 사고싶은데 5번째 참는 중
+                    <button id="btn-edit-story" type="button" class="btn btn-light btn-sm" onclick="edit-story-Card()"
+                            style="border: 1px solid rgba(0,0,0,.125)">수정하기
+                    </button>
+                </li>
+                </ul>
+                <div class="card-body" style="padding: 10px; text-align: center">
+                    <button id="btn-good" type="button" onclick="likeCard()" class="btn btn-secondary btn-lg"
+                            style="margin-top: 0px;">칭찬해
+                    </button>
+                    <span id="good-number" style="font-size: 20px; font-weight: bolder"> &nbsp; 5 &nbsp;</span>
+                    <button id="btn-bad" type="button" onclick="badCard()" class="btn btn-secondary btn-lg"
+                            style="margin-top: 0px;">분발해
+                    </button>
+                    <span id="bad-number" style="font-size: 20px; font-weight: bolder"> &nbsp; 3 &nbsp;</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--    <div class="row row-cols-1 row-cols-md-3" id="cards-box" style="width: 1200px; margin: auto">-->
+<!--    <div class="col mb-4">-->
+<!--        <div class="card">-->
+<!--            <img src="${image}"-->
+<!--                 class="card-img-top" alt="제품이미지">-->
+<!--            <div class="card-body">-->
+<!--                <a href="${url}"-->
+<!--                   class="card-title">${title}</a>-->
+<!--                <p class="card-text">${desc}</p>-->
+<!--            </div>-->
+<!--            <ul class="list-group list-group-flush">-->
+<!--                <li class="list-group-item">-->
+<!--                    <div class="input-group mb3">-->
+<!--                        <div class="input-group pretend">-->
+<!--                        <span class="input-group-text">가격</span>-->
+<!--                        </div></div>-->
+<!--                    <input type="text" class="form-control" id="price">-->
+<!--                    <div class="input-group-append">-->
+<!--                        <span class="input-group-text">원(KRW)</span>-->
+<!--                    </div>-->
+<!--                    <button id="btn-edit" type="button" class="btn btn-light" onclick="editCard()"-->
+<!--                    style="border: 1px solid rgba(0,0,0,.125)">수정하기-->
+<!--            </button>-->
+<!--        </-->
+<!--                </li>-->
+<!--                <li class="list-group-item">-->
+<!--                    <div class="input-group mb3">-->
+<!--                        <div class="input-group pretend">-->
+<!--                        <span class="input-group-text" style="font-size: 18px">망설이고 있는 자신의 모습</span>-->
+<!--                        </div></div>-->
+<!--                    <textarea class="form-control" id="post-story" aria-label="With textarea"-->
+<!--                              placeholder="망설이는 자신의 모습을 자유롭게 적어보세요"-->
+<!--                              style="font-size: 18px"></textarea>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--            <div class="card-body" style="padding: 10px; text-align: center">-->
+<!--                <button id="btn-good" type="button" onclick="likeCard('${url}')" class="btn btn-secondary btn-lg"-->
+<!--                        style="margin-top: 0px">칭찬해-->
+<!--                </button>-->
+<!--                <span id="good-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${like} &nbsp;</span>-->
+<!--                <button id="btn-bad" type="button" onclick="badCard('${url}')" class="btn btn-secondary btn-lg"-->
+<!--                        style="margin-top: 0px">분발해-->
+<!--                </button>-->
+<!--                <span id="bad-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${bad} &nbsp;</span>-->
+<!--            </div>-->
+<!--&lt;!&ndash;            <button id="btn-edit" type="button" class="btn btn-light" onclick="editCard()"&ndash;&gt;-->
+<!--&lt;!&ndash;                    style="border: 1px solid rgba(0,0,0,.125)">수정하기&ndash;&gt;-->
+<!--&lt;!&ndash;            </button>&ndash;&gt;-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+</div>
+</body>
+</html>

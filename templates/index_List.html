@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <!-- 구글폰트 -->
+    <link href="https://fonts.googleapis.com/css?family=Stylish&display=swap" rel="stylesheet">
+
+
+    <title>샀다치고 기록장</title>
+
+    <!-- style -->
+    <style type="text/css">
+
+        /*눈누폰트*/
+        @font-face {
+            font-family: 'NEXON Lv1 Gothic OTF';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            font-family: "NEXON Lv1 Gothic OTF"
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .jumbotron {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+            margin-bottom: 0;
+            background-color: #f8f9fa;
+        }
+
+        .lead {
+            text-align: center;
+        }
+
+
+        .card-body a {
+            font-size: 20px;
+        }
+
+        .inline {
+            display: inline-block;
+            margin: auto;
+
+        }
+
+        #btn-good {
+            background-color: cadetblue;
+            border-radius: 1.5rem;
+            border-color: white;
+        }
+
+        #btn-bad {
+            background-color: darkgrey;
+            border-radius: 1.5rem;
+            border-color: white;
+        }
+
+        .btn-outline-success {
+            color: dimgray;
+            border-color: dimgray;
+        }
+
+        .bd-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1071;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            showCardList();
+            $('#cards-box').empty();
+            show_my_card();
+            sumPrice();
+            $('#sum-total').empty();
+
+        });
+
+
+        function show_total() {
+            let sum = 0;
+            let email = $('#post-email').val();
+
+            $.ajax({
+                type: "GET",
+                url: "/card-list",
+                data: {},
+                success: function (response) {
+                    let patientCards = response["patient_card"];
+                    for (let i = 0; i < patientCards.length; i++) {
+                        if (patientCards[i]["email"] === email) {
+                            sum = parseInt(patientCards[i]["price"]) + parseInt(sum);
+                        }
+                    }
+                    sumPrice(sum);
+                }
+            })
+        }
+
+        function sumPrice(sum) {
+            let tempHtml = `<div class="container">
+        <h1 class="display-4" style="font-size: 2.3rem; font-weight: bolder"> &#x1F603 누적금액</h1>
+        <p class="lead" style="font-weight: bolder">${sum}원</p>
+    </div>`
+            $("#sum-total").append(tempHtml);
+            show_my_card();
+        }
+
+        function showCardList() {
+
+            $.ajax({
+                type: "GET",
+                url: "/card-list",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let patientCards = response["patient_card"];
+                        // console.log(patientCards);
+                        for (let i = 0; i < patientCards.length; i++) {
+                            makeCard(patientCards[i]["image"], patientCards[i]["title"], patientCards[i]["price"], patientCards[i]["desc"], patientCards[i]["story"],
+                                patientCards[i]["url"], patientCards[i]["like"], patientCards[i]["bad"]);
+
+                        }
+                    }
+                }
+            })
+        }
+
+        function makeCard(image, title, price, desc, story, url, like, bad) {
+            let tempHtml = `<div class="col mb-4">
+        <div class="card">
+            <img src="${image}"
+                 class="card-img-top" alt="제품이미지">
+            <div class="card-body">
+                <a href="${url}"
+                   class="card-title">${title}</a>
+                <p class="card-text">${desc}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">가격: ${price} 원</li>
+                <li class="list-group-item">${story}
+                </li>
+            </ul>
+            <div class="card-body" style="padding: 10px; text-align: center">
+                <button id="btn-good" type="button" onclick="likeCard('${url}')" class="btn btn-secondary btn-lg"
+                        style="margin-top: 0px">칭찬해
+                </button>
+                <span id="good-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${like} &nbsp;</span>
+                <button id="btn-bad" type="button" onclick="badCard('${url}')" class="btn btn-secondary btn-lg"
+                        style="margin-top: 0px">분발해
+                </button>
+                <span id="bad-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${bad} &nbsp;</span>
+            </div>
+
+        </div>
+    </div>`
+            $("#cards-box").append(tempHtml);
+
+        }
+
+        function likeCard(url) {
+
+            $.ajax({
+                type: 'POST',
+                url: '/card/like',
+                data: {'url_give': url},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+
+        function badCard(url) {
+            $.ajax({
+                type: 'POST',
+                url: '/card/bad',
+                data: {'url_give': url},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+
+        function show_my_card() {
+            $('#cards-box').empty();
+
+            $.ajax({
+                type: "GET",
+                url: "/card-list",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let patientCards = response["patient_card"];
+                        // console.log(patientCards);
+                        for (let i = 0; i < patientCards.length; i++) {
+                            if (patientCards[i]["email"] === $("#post-email").val()) {
+                                make_my_card(patientCards[i]["image"], patientCards[i]["title"], patientCards[i]["price"], patientCards[i]["desc"], patientCards[i]["story"],
+                                    patientCards[i]["url"], patientCards[i]["like"], patientCards[i]["bad"]);
+                            }
+                        }
+
+                    }
+                }
+            })
+        }
+
+        function make_my_card(image, title, price, desc, story, url, like, bad) {
+
+            let tempHtml = `
+<div class="col mb-4">
+        <div class="card">
+            <img src="${image}"
+                 class="card-img-top" alt="제품이미지">
+            <div class="card-body">
+                <a href="${url}"
+                   class="card-title">${title}</a>
+                <p class="card-text">${desc}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                    <li class="list-group-item">가격: ${price}원
+                    <button id="btn-edit-price" type="button" class="btn btn-light btn-sm" onclick="edit_price_card('${url}')"
+                            style="border: 1px solid rgba(0,0,0,.125)">수정하기
+                    </button></li>
+                </ul>
+                <li class="list-group-item">${story}
+                    <button id="btn-edit-story" type="button" class="btn btn-light btn-sm" onclick="edit_story_card('${url}')"
+                            style="border: 1px solid rgba(0,0,0,.125)">수정하기
+                    </button>
+                </li>
+                </ul>
+            <div class="card-body" style="padding: 10px; text-align: center">
+                <button id="btn-good" type="button" onclick="likeCard('${url}')" class="btn btn-secondary btn-lg"
+                        style="margin-top: 0px">칭찬해
+                </button>
+                <span id="good-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${like} &nbsp;</span>
+                <button id="btn-bad" type="button" onclick="badCard('${url}')" class="btn btn-secondary btn-lg"
+                        style="margin-top: 0px">분발해
+                </button>
+                <span id="bad-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${bad} &nbsp;</span>
+            </div>
+        </div>
+    </div>`
+            $("#cards-box").append(tempHtml);
+        }
+
+        function edit_price_card(url) {
+
+            $('#cards-box').empty();
+
+            $.ajax({
+                type: "GET",
+                url: "/card-list",
+                data: {},
+                success: function (response) {
+                    let patientCards = response["patient_card"];
+                    for (let i = 0; patientCards.length; i++) {
+                        let thisCard = patientCards[i];
+                        if (thisCard["url"] === url) {
+                            make_edit_price_card(thisCard["image"], thisCard["title"], thisCard["url"], thisCard["desc"], thisCard["story"], patientCards[i]["like"], patientCards[i]["bad"]);
+                        }
+                    }
+                }
+            })
+        }
+
+        function edit_story_card(url) {
+
+            $('#cards-box').empty();
+
+            $.ajax({
+                type: "GET",
+                url: "/card-list",
+                data: {},
+                success: function (response) {
+                    let patientCards = response["patient_card"];
+                    for (let i = 0; patientCards.length; i++) {
+                        let thisCard = patientCards[i];
+                        if (thisCard["url"] === url) {
+                            make_edit_story_card(thisCard["image"], thisCard["title"], thisCard["url"], thisCard["desc"], thisCard["price"], patientCards[i]["like"], patientCards[i]["bad"]);
+                        }
+                    }
+                }
+            })
+        }
+
+        function make_edit_price_card(image, title, url, desc, story, like, bad) {
+            let tempHtml = `
+    <div class="col mb-4">
+        <div class="card">
+            <img src="${image}"
+                 class="card-img-top" alt="제품이미지">
+            <div class="card-body">
+                <a href="${url}"
+                   class="card-title">${title}</a>
+                <p class="card-text">${desc}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="price" placeholder="가격을 수정해보세요">
+                    <div class="input-group-append">
+                        <span class="input-group-text">원(KRW)</span>
+                    </div>
+                </div>
+                    <button id="btn-edit-price" type="button" class="btn btn-light btn-sm" onclick="complete_price_card('${url}')"
+                            style="border: 1px solid rgba(0,0,0,.125)">수정완료
+                    </button>
+                </li>
+                <li class="list-group-item">${story}
+                </li>
+                </ul>
+            <div class="card-body" style="padding: 10px; text-align: center">
+                <button id="btn-good" type="button" onclick="likeCard('${url}')" class="btn btn-secondary btn-lg"
+                        style="margin-top: 0px">칭찬해
+                </button>
+                <span id="good-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${like} &nbsp;</span>
+                <button id="btn-bad" type="button" onclick="badCard('${url}')" class="btn btn-secondary btn-lg"
+                        style="margin-top: 0px">분발해
+                </button>
+                <span id="bad-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${bad} &nbsp;</span>
+            </div>
+        </div>
+</div>
+</div>`;
+            $("#cards-box").append(tempHtml);
+        }
+
+        function make_edit_story_card(image, title, url, desc, price, like, bad) {
+            let tempHtml = `<div class="col mb-4">
+        <div class="card">
+            <img src="${image}"
+                 class="card-img-top" alt="제품이미지">
+            <div class="card-body">
+                <a href="${url}"
+                   class="card-title">${title}</a>
+                <p class="card-text">${desc}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">가격: ${price}원</li>
+                <li class="list-group-item">
+                <div class="input-group">
+            <textarea class="form-control" id="post-story" aria-label="With textarea"
+                      placeholder="망설이고 있는 자신의 모습을 수정해보세요"
+                      style="font-size: 18px"></textarea>
+        </div>
+                    <button id="btn-edit-story" type="button" class="btn btn-light btn-sm" onclick="complete_story_card('${url}')"
+                            style="border: 1px solid rgba(0,0,0,.125)">수정완료
+                    </button>
+                </li>
+                </ul>
+            <div class="card-body" style="padding: 10px; text-align: center">
+                <button id="btn-good" type="button" onclick="likeCard('${url}')" class="btn btn-secondary btn-lg"
+                        style="margin-top: 0px">칭찬해
+                </button>
+                <span id="good-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${like} &nbsp;</span>
+                <button id="btn-bad" type="button" onclick="badCard('${url}')" class="btn btn-secondary btn-lg"
+                        style="margin-top: 0px">분발해
+                </button>
+                <span id="bad-number" style="font-size: 20px; font-weight: bolder"> &nbsp; ${bad} &nbsp;</span>
+            </div>
+        </div>
+</div>
+</div>`;
+            $("#cards-box").append(tempHtml);
+        }
+
+        function complete_price_card(url) {
+
+            let price = $("#price").val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/card/price/edit',
+                data: {'url_give': url, 'price_give': price},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        window.location.reload();
+                        let patientCards = response["patient_card"];
+                        for (let i = 0; i < patientCards.length; i++) {
+                            make_my_card(patientCards[i]["image"], patientCards[i]["title"], patientCards[i]["price"], patientCards[i]["desc"], patientCards[i]["story"],
+                                patientCards[i]["url"], patientCards[i]["like"], patientCards[i]["bad"]);
+                        }
+
+                    }
+                }
+            });
+        }
+
+        function complete_story_card(url) {
+
+            let story = $("#post-story").val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/card/story/edit',
+                data: {'url_give': url, 'story_give': story},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        window.location.reload();
+                        let patientCards = response["patient_card"];
+                        for (let i = 0; i < patientCards.length; i++) {
+                            make_my_card(patientCards[i]["image"], patientCards[i]["title"], patientCards[i]["price"], patientCards[i]["desc"], patientCards[i]["story"],
+                                patientCards[i]["url"], patientCards[i]["like"], patientCards[i]["bad"]);
+                        }
+
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div>
+
+    <!--    <nav class="navbar navbar-light bg-light">-->
+    <!--        <a class="navbar-brand" href="http://nobuy.shop/" style="text-align: center; position: fixed; margin-top: 50px">샀다치고</br>-->
+    <!--            기록장</a>-->
+
+    <!--        <form class="form-inline" style="margin-left: 70%">-->
+    <!--            <input class="form-control mr-sm-2" id="post-email" type="search" placeholder="이메일로 내 기록 조회"-->
+    <!--                   aria-label="Search">-->
+    <!--            <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="show_total()">Search</button>-->
+    <!--        </form>-->
+    <!--    </nav>-->
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light bd-navbar">
+        <a class="navbar-brand" href="http://nobuy.shop/" style="font-size: 1.4rem">샀다치고 기록장</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="http://nobuy.shop/card-archive">카드모음집 <span
+                            class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Calender</a>
+                </li>
+            </ul>
+            <div class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" id="post-email" type="search" placeholder="이메일로 내 기록 조회" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="button" onclick="show_total()">Search
+                </button>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="jumbotron jumbotron-fluid" style="margin-bottom: 20px">
+        <div class="container">
+            <h1 class="display-4" style="font-weight: bolder">샀다치고 기록해보자</h1>
+            <p class="lead" style="font-weight: bolder">샀다치고, 사치를 인내하자. 인내를 사치하자</p>
+        </div>
+    </div>
+
+
+    <div class="container" id="sum-total">
+        <h1 class="display-4" style="font-size: 2.3rem; font-weight: bolder"> &#128077 샀다치고 아껴서 누적된 금액</h1>
+        <p class="lead" style="font-weight: bolder">1500000원</p>
+    </div>
+
+
+    <div class="row row-cols-1 row-cols-md-3" id="cards-box" style="width: 1200px; margin: auto">
+        <div class="col mb-4">
+            <div class="card">
+                <img src="http://thumb.cjmall.net/unsafe/fit-in/470x470/itemimage.cjmall.net/goods_images/63/648/63250648L.jpg?timestamp=20200324092522"
+                     class="card-img-top" alt="제품이미지">
+                <div class="card-body">
+                    <a href="http://display.cjmall.com/p/item/63250648?gclid=Cj0KCQjwvvj5BRDkARIsAGD9vlIvbxaxnc-xMlkne8oD-1338tPtlah_lUKzARB9cpB2yP6e0Un-2e8aAiX8EALw_wcB"
+                       class="card-title">상품상세정보</a>
+                    <p class="card-text">여성 우먼스 나이키 리액트 엘리먼트 55 NIKE BQ2728-012</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">가격: 100,000원</li>
+                    <li class="list-group-item">너어무 사고싶은데 5번째 참는 중
+                    </li>
+                </ul>
+                <div class="card-body" style="padding: 10px; text-align: center">
+                    <button id="btn-good" type="button" onclick="likeCard()" class="btn btn-secondary btn-lg"
+                            style="margin-top: 0px;">칭찬해
+                    </button>
+                    <span id="good-number" style="font-size: 20px; font-weight: bolder"> &nbsp; 5 &nbsp;</span>
+                    <button id="btn-bad" type="button" onclick="badCard()" class="btn btn-secondary btn-lg"
+                            style="margin-top: 0px;">분발해
+                    </button>
+                    <span id="bad-number" style="font-size: 20px; font-weight: bolder"> &nbsp; 3 &nbsp;</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>
